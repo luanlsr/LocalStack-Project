@@ -2,13 +2,7 @@
 
 <div align="center">
 
-![Node.js](https://img.shields.io/badge/Node.js-18.x-green?style=for-the-badge&logo=node.js)
-![Express](https://img.shields.io/badge/Express-4.x-black?style=for-the-badge&logo=express)
-![Docker](https://img.shields.io/badge/Docker-Compose-blue?style=for-the-badge&logo=docker)
-![LocalStack](https://img.shields.io/badge/LocalStack-AWS%20Local-orange?style=for-the-badge)
-![Terraform](https://img.shields.io/badge/Terraform-IaC-purple?style=for-the-badge&logo=terraform)
-![Prometheus](https://img.shields.io/badge/Prometheus-Monitoring-red?style=for-the-badge&logo=prometheus)
-![Grafana](https://img.shields.io/badge/Grafana-Visualization-orange?style=for-the-badge&logo=grafana)
+![Node.js](https://img.shields.io/badge/Node.js-18.x-green?style=for-the-badge&logo=node.js)![Express](https://img.shields.io/badge/Express-4.x-black?style=for-the-badge&logo=express)![Docker](https://img.shields.io/badge/Docker-Compose-blue?style=for-the-badge&logo=docker)![LocalStack](https://img.shields.io/badge/LocalStack-AWS%20Local-orange?style=for-the-badge)![Terraform](https://img.shields.io/badge/Terraform-IaC-purple?style=for-the-badge&logo=terraform)![Prometheus](https://img.shields.io/badge/Prometheus-Monitoring-red?style=for-the-badge&logo=prometheus)![Grafana](https://img.shields.io/badge/Grafana-Visualization-orange?style=for-the-badge&logo=grafana)
 
 **Ambiente completo para simular serviços AWS localmente com monitoramento e observabilidade**
 
