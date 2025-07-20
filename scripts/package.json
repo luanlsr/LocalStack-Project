@@ -1,0 +1,22 @@
+{
+  "name": "localstack-scripts",
+  "version": "1.0.0",
+  "description": "Scripts para teste e geração de tráfego da API LocalStack",
+  "main": "generate-traffic.js",
+  "scripts": {
+    "generate-traffic": "node generate-traffic.js",
+    "test": "node generate-traffic.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "keywords": [
+    "localstack",
+    "aws",
+    "testing",
+    "traffic",
+    "monitoring"
+  ],
+  "author": "LocalStack Project",
+  "license": "MIT"
+} 
