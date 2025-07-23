@@ -1,15 +1,15 @@
 {
-  "total": 8,
-  "passed": 5,
-  "failed": 3,
+  "total": 9,
+  "passed": 9,
+  "failed": 0,
   "tests": [
     {
       "name": "Health Check",
       "success": true,
-      "timestamp": "2025-07-23T00:51:12.581Z",
+      "timestamp": "2025-07-23T01:55:39.177Z",
       "status": 200,
       "data": {
-        "timestamp": "2025-07-23T00:51:23.083Z",
+        "timestamp": "2025-07-23T01:55:49.061Z",
         "status": "healthy",
         "services": {
           "localstack": {
@@ -29,48 +29,93 @@
     },
     {
       "name": "Authentication",
-      "success": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiYWRtaW4iLCJpYXQiOjE3NTMyMzE4ODMsImV4cCI6MTc1MzIzNTQ4M30.R4hg8Hk3HRwt5I472RrjQKRCIEyogMuvWZlZFWw5dNI",
-      "timestamp": "2025-07-23T00:51:13.351Z",
+      "success": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiYWRtaW4iLCJpYXQiOjE3NTMyMzU3NDksImV4cCI6MTc1MzIzOTM0OX0.Wa6yUkSpPndLO-kTAutS_Y_MYOLbQbaI51Nij9k0h9E",
+      "timestamp": "2025-07-23T01:55:39.702Z",
       "status": 200,
       "hasToken": true
     },
     {
       "name": "Invalid Authentication",
       "success": true,
-      "timestamp": "2025-07-23T00:51:13.862Z",
+      "timestamp": "2025-07-23T01:55:40.223Z",
       "status": 401
     },
     {
       "name": "Protected Endpoint Without Token",
       "success": true,
-      "timestamp": "2025-07-23T00:51:14.375Z",
+      "timestamp": "2025-07-23T01:55:40.735Z",
       "status": 401
     },
     {
       "name": "SQS Send Message",
-      "success": false,
-      "timestamp": "2025-07-23T00:51:17.013Z",
-      "error": "Request failed with status code 500"
+      "success": "5cfffedf-ccaf-4492-af7f-cf6d1de2ac72",
+      "timestamp": "2025-07-23T01:55:41.257Z",
+      "status": 200,
+      "messageId": "5cfffedf-ccaf-4492-af7f-cf6d1de2ac72"
     },
     {
       "name": "S3 Upload",
-      "success": false,
-      "timestamp": "2025-07-23T00:51:20.153Z",
-      "error": "Request failed with status code 500"
+      "success": "Arquivo enviado com sucesso para o S3!",
+      "timestamp": "2025-07-23T01:55:42.273Z",
+      "status": 200
     },
     {
       "name": "DynamoDB Insert",
-      "success": false,
-      "timestamp": "2025-07-23T00:51:26.216Z",
-      "error": "Request failed with status code 500"
+      "success": "Item inserido com sucesso no DynamoDB!",
+      "timestamp": "2025-07-23T01:55:43.307Z",
+      "status": 200,
+      "itemId": "test-1753235743286"
+    },
+    {
+      "name": "DynamoDB Get",
+      "success": {
+        "name": {
+          "S": "Test Item"
+        },
+        "description": {
+          "S": "Integration test item"
+        },
+        "active": {
+          "BOOL": true
+        },
+        "id": {
+          "S": "test-1753235743286"
+        },
+        "timestamp": {
+          "S": "2025-07-23T01:55:43.286Z"
+        }
+      },
+      "timestamp": "2025-07-23T01:55:43.324Z",
+      "status": 200,
+      "itemId": "test-1753235743286",
+      "response": {
+        "message": "Item encontrado no DynamoDB!",
+        "item": {
+          "name": {
+            "S": "Test Item"
+          },
+          "description": {
+            "S": "Integration test item"
+          },
+          "active": {
+            "BOOL": true
+          },
+          "id": {
+            "S": "test-1753235743286"
+          },
+          "timestamp": {
+            "S": "2025-07-23T01:55:43.286Z"
+          }
+        }
+      }
     },
     {
       "name": "Prometheus Metrics",
       "success": true,
-      "timestamp": "2025-07-23T00:51:26.732Z",
+      "timestamp": "2025-07-23T01:55:43.837Z",
       "status": 200,
       "hasMetrics": true,
-      "dataLength": 8579
+      "dataLength": 8562
     }
   ]
 }
