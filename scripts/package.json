@@ -5,6 +5,9 @@
   "main": "generate-traffic.js",
   "scripts": {
     "generate-traffic": "node generate-traffic.js",
+    "integration": "node test-integration.js",
+    "load": "node test-load.js",
+    "test:all": "npm run integration && npm run load",
     "test": "node generate-traffic.js"
   },
   "dependencies": {
@@ -15,7 +18,9 @@
     "aws",
     "testing",
     "traffic",
-    "monitoring"
+    "monitoring",
+    "integration",
+    "load-testing"
   ],
   "author": "LocalStack Project",
   "license": "MIT"

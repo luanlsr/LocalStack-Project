@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Testes - LocalStack API</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .test-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .test-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #6c757d;
+            transition: all 0.3s ease;
+        }
+
+        .test-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .test-card.running {
+            border-left-color: #ffc107;
+            background: #fff3cd;
+        }
+
+        .test-card.success {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+
+        .test-card.error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .test-name {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .test-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background: #6c757d;
+            color: white;
+        }
+
+        .status-running {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .status-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .status-error {
+            background: #dc3545;
+            color: white;
+        }
+
+        .test-details {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+
+        .test-actions {
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #1e7e34;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .results-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .results-title {
+            font-size: 1.5em;
+            color: #2c3e50;
+        }
+
+        .results-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .summary-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .summary-label {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .summary-success .summary-number {
+            color: #28a745;
+        }
+
+        .summary-error .summary-number {
+            color: #dc3545;
+        }
+
+        .summary-total .summary-number {
+            color: #007bff;
+        }
+
+        .log-container {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #007bff, #28a745);
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .test-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-chart-line"></i> Dashboard de Testes</h1>
+            <p>LocalStack API - Testes de Integração e Carga</p>
+        </div>
+
+        <div class="content">
+            <!-- Seção de Testes de Integração -->
+            <div class="test-section">
+                <h2 class="section-title">
+                    <i class="fas fa-plug"></i>
+                    Testes de Integração
+                </h2>
+                
+                <div class="test-grid" id="integration-tests">
+                    <!-- Testes serão inseridos aqui dinamicamente -->
+                </div>
+
+                <div class="test-actions">
+                    <button class="btn btn-primary" onclick="runIntegrationTests()">
+                        <i class="fas fa-play"></i> Executar Todos os Testes
+                    </button>
+                    <button class="btn btn-success" onclick="runSingleTest('health')">
+                        <i class="fas fa-heartbeat"></i> Health Check
+                    </button>
+                    <button class="btn btn-warning" onclick="runSingleTest('auth')">
+                        <i class="fas fa-key"></i> Teste de Autenticação
+                    </button>
+                </div>
+            </div>
+
+            <!-- Seção de Testes de Carga -->
+            <div class="test-section">
+                <h2 class="section-title">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Testes de Carga
+                </h2>
+                
+                <div class="test-grid" id="load-tests">
+                    <!-- Testes de carga serão inseridos aqui -->
+                </div>
+
+                <div class="test-actions">
+                    <button class="btn btn-primary" onclick="runLoadTest('low')">
+                        <i class="fas fa-tachometer-alt"></i> Carga Baixa
+                    </button>
+                    <button class="btn btn-warning" onclick="runLoadTest('medium')">
+                        <i class="fas fa-tachometer-alt"></i> Carga Média
+                    </button>
+                    <button class="btn btn-danger" onclick="runLoadTest('high')">
+                        <i class="fas fa-tachometer-alt"></i> Carga Alta
+                    </button>
+                    <button class="btn btn-danger" onclick="runLoadTest('stress')">
+                        <i class="fas fa-fire"></i> Teste de Stress
+                    </button>
+                </div>
+            </div>
+
+            <!-- Seção de Resultados -->
+            <div class="results-section" id="results-section" style="display: none;">
+                <div class="results-header">
+                    <h3 class="results-title">
+                        <i class="fas fa-chart-bar"></i>
+                        Resultados dos Testes
+                    </h3>
+                    <button class="btn btn-primary" onclick="downloadResults()">
+                        <i class="fas fa-download"></i> Baixar Resultados
+                    </button>
+                </div>
+
+                <div class="results-summary" id="results-summary">
+                    <!-- Resumo será inserido aqui -->
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                </div>
+
+                <div class="log-container" id="test-log">
+                    <!-- Logs serão inseridos aqui -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html> 

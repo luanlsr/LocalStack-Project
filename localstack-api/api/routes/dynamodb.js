@@ -27,7 +27,7 @@ router.get('/item/:id', authenticateJWT, async (req, res) => {
 
   const params = {
     TableName: TABLE_NAME,
-    Key: { id },
+    Key: { id: { S: id } },
   };
 
   try {

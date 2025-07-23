@@ -1,0 +1,76 @@
+{
+  "total": 8,
+  "passed": 5,
+  "failed": 3,
+  "tests": [
+    {
+      "name": "Health Check",
+      "success": true,
+      "timestamp": "2025-07-23T00:51:12.581Z",
+      "status": 200,
+      "data": {
+        "timestamp": "2025-07-23T00:51:23.083Z",
+        "status": "healthy",
+        "services": {
+          "localstack": {
+            "status": "healthy"
+          },
+          "s3": {
+            "status": "healthy"
+          },
+          "sqs": {
+            "status": "healthy"
+          },
+          "dynamodb": {
+            "status": "healthy"
+          }
+        }
+      }
+    },
+    {
+      "name": "Authentication",
+      "success": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiYWRtaW4iLCJpYXQiOjE3NTMyMzE4ODMsImV4cCI6MTc1MzIzNTQ4M30.R4hg8Hk3HRwt5I472RrjQKRCIEyogMuvWZlZFWw5dNI",
+      "timestamp": "2025-07-23T00:51:13.351Z",
+      "status": 200,
+      "hasToken": true
+    },
+    {
+      "name": "Invalid Authentication",
+      "success": true,
+      "timestamp": "2025-07-23T00:51:13.862Z",
+      "status": 401
+    },
+    {
+      "name": "Protected Endpoint Without Token",
+      "success": true,
+      "timestamp": "2025-07-23T00:51:14.375Z",
+      "status": 401
+    },
+    {
+      "name": "SQS Send Message",
+      "success": false,
+      "timestamp": "2025-07-23T00:51:17.013Z",
+      "error": "Request failed with status code 500"
+    },
+    {
+      "name": "S3 Upload",
+      "success": false,
+      "timestamp": "2025-07-23T00:51:20.153Z",
+      "error": "Request failed with status code 500"
+    },
+    {
+      "name": "DynamoDB Insert",
+      "success": false,
+      "timestamp": "2025-07-23T00:51:26.216Z",
+      "error": "Request failed with status code 500"
+    },
+    {
+      "name": "Prometheus Metrics",
+      "success": true,
+      "timestamp": "2025-07-23T00:51:26.732Z",
+      "status": 200,
+      "hasMetrics": true,
+      "dataLength": 8579
+    }
+  ]
+}

@@ -13,6 +13,16 @@ const metricsRoutes = require('./routes/metrics');
 const app = express();
 app.use(bodyParser.json());
 
+// Middleware global para logar tempo de execução das requisições
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    console.log(`[${req.method}] ${req.originalUrl} - ${duration}ms`);
+  });
+  next();
+});
+
 registerPrometheusMetrics(app);
 initializeServices();
 

@@ -227,6 +227,64 @@ terraform apply -auto-approve
 cd ..
 ```
 
+#### 3️⃣.1 **Atenção: Atualize o Terraform e Provider AWS para LocalStack**
+
+> **Importante!**
+>
+> Para evitar erros de timeout ou problemas ao criar recursos SQS/DynamoDB/S3 no LocalStack, garanta que o bloco `provider` do seu `main.tf` está assim:
+>
+> ```hcl
+> provider "aws" {
+>   region                      = "us-east-1"
+>   access_key                  = "test"
+>   secret_key                  = "test"
+>   skip_credentials_validation = true
+>   skip_metadata_api_check     = true
+>   skip_requesting_account_id  = true
+>   skip_region_validation      = true
+>   s3_use_path_style           = true
+>   endpoints {
+>     sqs      = "http://localhost:4566"
+>     s3       = "http://localhost:4566"
+>     dynamodb = "http://localhost:4566"
+>   }
+> }
+> ```
+>
+> Se ocorrer erro de timeout ao aplicar o Terraform:
+> 1. Limpe o state da fila SQS:
+>    ```sh
+>    terraform state rm aws_sqs_queue.minha_fila
+>    ```
+> 2. Delete a fila manualmente se necessário:
+>    ```sh
+>    aws --endpoint-url=http://localhost:4566 sqs delete-queue --queue-url http://localhost:4566/000000000000/minha-fila
+>    ```
+> 3. Rode novamente o `terraform apply`.
+>
+> **Garanta também que está usando uma versão recente do provider AWS:**
+> ```hcl
+> terraform {
+>   required_providers {
+>     aws = {
+>       source  = "hashicorp/aws"
+>       version = ">= 4.0"
+>     }
+>   }
+> }
+> ```
+
+#### 3️⃣.2 **Execute os testes automatizados**
+
+Após a infraestrutura estar criada, execute os testes automatizados para validar o ambiente:
+
+```bash
+cd scripts
+npm install
+npm run test:all
+cd ..
+```
+
 #### 4️⃣ **Valide os Recursos**
 
 ```bash
@@ -241,7 +299,8 @@ aws --endpoint-url=http://localhost:4566 dynamodb list-tables --output json
 | Serviço | URL | Credenciais | Descrição |
 |---------|-----|-------------|-----------|
 | 🌐 **API** | http://localhost:3000 | - | API principal |
-| 📊 **Grafana** | http://localhost:3001 | admin/admin | Dashboards |
+| 🎯 **Dashboard de Testes** | http://localhost:3001 | - | Interface visual para testes |
+| 📊 **Grafana** | http://localhost:3002 | admin/admin | Dashboards |
 | 📈 **Prometheus** | http://localhost:9090 | - | Métricas |
 | ☁️ **LocalStack** | http://localhost:4566 | - | Simulação AWS |
 
@@ -370,7 +429,7 @@ curl -X GET http://localhost:3000/metrics
 
 #### 🚀 **Importar Dashboard**
 
-1. **Acesse o Grafana:** http://localhost:3001
+1. **Acesse o Grafana:** http://localhost:3002
 2. **Login:** admin / admin
 3. **Importe o dashboard:**
    - Clique em **"+"** → **"Import"**
@@ -399,54 +458,185 @@ curl -X GET http://localhost:3000/metrics
 
 ## 🧪 Testes
 
-### 🔄 **Gerador de Tráfego Automático**
+### 🎯 Dashboard Visual (Recomendado)
+
+Para uma experiência visual completa e interativa, use o dashboard web:
 
 ```bash
-# Entre na pasta de scripts
-cd scripts
+# Navegar para a pasta do dashboard
+cd test-dashboard
 
-# Instale as dependências
+# Instalar dependências
 npm install
 
-# Execute o gerador de tráfego
-npm run generate-traffic
-
-# Ou execute diretamente
-node generate-traffic.js
+# Iniciar o dashboard
+npm start
 ```
 
-### 📊 **O que o Script Faz**
+**Acesse:** http://localhost:3001
 
-1. **🔐 Login** automático com JWT
-2. **🔄 Loop** de 10 iterações de testes
-3. **📨 SQS** - Envia mensagens
-4. **🗄️ S3** - Faz upload de arquivos
-5. **🗃️ DynamoDB** - Insere e busca itens
-6. **🏥 Health** - Verifica status dos serviços
+#### ✨ Funcionalidades do Dashboard
+- **Interface Moderna** - Design responsivo e intuitivo
+- **Testes Visuais** - Cards individuais para cada teste
+- **Status em Tempo Real** - Acompanhamento visual do progresso
+- **Logs Interativos** - Visualização detalhada da execução
+- **Métricas Visuais** - Gráficos e indicadores de performance
+- **Execução Individual** - Execute testes específicos
+- **Execução em Lote** - Execute todos os testes de uma vez
 
-### 🎯 **Resultado**
+### 🚀 Testes Automatizados
 
-```
-🚀 Gerando tráfego para popular métricas...
-✅ Login realizado com sucesso
-✅ Health check 1
-✅ DynamoDB 1
-✅ SQS 1
-✅ S3 1
-...
-🎉 Tráfego gerado com sucesso!
-📊 Acesse o Grafana em: http://localhost:3001
-📈 Métricas disponíveis em: http://localhost:3000/metrics
-```
+O projeto inclui uma suíte completa de testes automatizados localizada na pasta `scripts/`.
 
-### 🧪 **Testes Manuais**
+#### 📋 Tipos de Testes Disponíveis
+
+| Tipo | Script | Descrição |
+|------|--------|-----------|
+| 🧪 **Integração** | `test-integration.js` | Valida todos os endpoints e funcionalidades |
+| 📈 **Carga** | `test-load.js` | Testa performance sob diferentes cargas |
+| 🔄 **Tráfego** | `generate-traffic.js` | Gera tráfego contínuo para métricas |
+
+#### 🎯 Executar Todos os Testes
 
 ```bash
-# Teste de carga com k6 (opcional)
-k6 run test/k6-load.js
+# Navegar para a pasta de scripts
+cd scripts
 
-# Testes unitários (se implementados)
-npm test
+# Instalar dependências
+npm install
+
+# Executar todos os testes
+npm run test:all
+```
+
+#### 📊 Testes Individuais
+
+```bash
+# Testes de integração
+npm run integration
+
+# Testes de carga
+npm run load
+
+# Geração de tráfego
+npm run generate-traffic
+```
+
+#### 📈 Resultados dos Testes
+
+Os testes geram relatórios detalhados:
+
+- **`test-results.json`** - Resultados dos testes de integração
+- **`load-test-results.json`** - Resultados dos testes de carga
+
+**Exemplo de saída:**
+```
+🚀 Iniciando Testes de Integração...
+==================================================
+✅ Health Check
+✅ Authentication
+✅ SQS Send Message
+✅ S3 Upload
+✅ DynamoDB Insert
+✅ DynamoDB Get
+✅ Prometheus Metrics
+
+📊 RESUMO DOS TESTES
+==================================================
+Total de Testes: 7
+✅ Passaram: 7
+❌ Falharam: 0
+📈 Taxa de Sucesso: 100.0%
+
+🎯 Status Final:
+✅ TODOS OS TESTES PASSARAM!
+```
+
+### 🔧 Testes Manuais
+
+#### Teste de Conectividade
+```bash
+# Health Check
+curl http://localhost:3000/health
+
+# Resposta esperada:
+# {"status":"OK","timestamp":"2024-01-01T12:00:00.000Z"}
+```
+
+#### Teste de Autenticação
+```bash
+# Login
+curl -X POST http://localhost:3000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"user":"admin","password":"123"}'
+
+# Resposta esperada:
+# {"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."}
+```
+
+#### Teste de Endpoints Protegidos
+```bash
+# Usar o token obtido no login
+TOKEN="seu_token_aqui"
+
+# SQS - Enviar mensagem
+curl -X POST http://localhost:3000/sqs/send \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Teste de mensagem"}'
+
+# S3 - Upload de arquivo
+curl -X POST http://localhost:3000/s3/upload \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"filename": "teste.json", "content": "{\"teste\": true}"}'
+
+# DynamoDB - Inserir item
+curl -X POST http://localhost:3000/dynamodb/item \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"id": "teste-1", "name": "Item Teste", "description": "Descrição do item"}'
+```
+
+### 📊 Interpretação dos Resultados
+
+#### ✅ Testes de Integração
+- **Taxa de Sucesso ≥ 90%**: Sistema funcionando bem
+- **Taxa de Sucesso < 90%**: Verificar configurações e conectividade
+
+#### 📈 Testes de Carga
+- **Tempo Médio < 500ms**: Excelente performance
+- **Tempo Médio 500-1000ms**: Performance aceitável
+- **Tempo Médio > 1000ms**: Necessita otimização
+- **Taxa de Sucesso ≥ 95%**: Sistema estável
+- **Taxa de Sucesso < 95%**: Possíveis gargalos
+
+### 🎯 Cenários de Teste de Carga
+
+1. **Carga Baixa** (10 requests simultâneos)
+2. **Carga Média** (50 requests simultâneos)
+3. **Carga Alta** (100 requests simultâneos)
+4. **Teste de Stress** (50 requests protegidos)
+5. **Teste de Resistência** (30 segundos contínuos)
+
+### 🚨 Troubleshooting dos Testes
+
+#### Problemas Comuns:
+1. **API não responde**: Verificar se o Docker Compose está rodando
+2. **Erro de autenticação**: Verificar credenciais admin/123
+3. **Timeout nos testes**: Aumentar intervalos entre requests
+4. **Falhas em S3/SQS**: Verificar conectividade com LocalStack
+
+#### Logs Úteis:
+```bash
+# Ver logs do container da API
+docker-compose logs localstack-api
+
+# Ver logs do LocalStack
+docker-compose logs localstack
+
+# Verificar status dos containers
+docker-compose ps
 ```
 
 ---
